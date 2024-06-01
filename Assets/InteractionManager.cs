@@ -152,15 +152,15 @@ public class InteractionManager : MonoBehaviour
         musicIndices.Add("Respeita o interior - Fabiano Guimarães", 44);
         musicIndices.Add("Respeita o interior - Fabiano Guimarãess", 45);
 
-        bottleIndices.Add("umburana", 1);
-        bottleIndices.Add("cristal", 2);
-        bottleIndices.Add("abelha", 3);
-        bottleIndices.Add("balsamo", 4);
-        bottleIndices.Add("single", 5);
-        bottleIndices.Add("black", 6);
+        bottleIndices.Add("Matuta Umburana", 1);
+        bottleIndices.Add("Matuta Cristal", 2);
+        bottleIndices.Add("Abelha Rainha", 3);
+        bottleIndices.Add("Matuta Bálsamo", 4);
+        bottleIndices.Add("Matuta single Blend's", 5);
+        bottleIndices.Add("Matuta Black Blend's", 6);
 
-        //PlayMusicByName(PhotoTaker.Instance.currentUserMusic);
-        PlayMusicByName(PhotoTaker.Instance.currentUserMusicInput.text);
+        PlayMusicByName(PhotoTaker.Instance.currentUserMusic);
+        //PlayMusicByName(PhotoTaker.Instance.currentUserMusicInput.text);
         Debug.Log("Deu play na musica " + PhotoTaker.Instance.currentUserMusic);
         ShowBotttle(PhotoTaker.Instance.currentUserMatuta);
 

@@ -88,13 +88,13 @@ public class CapturePhotos : MonoBehaviour
     private void StartServer()
     {
 
-        //httpListener = new HttpListener();
-        //httpListener.Prefixes.Add("http://*:8080/webhook/"); // Substitua pelo seu endpoint desejado
-        //httpListener.Start();
-        //isRunning = true;
-        //UnityEngine.Debug.Log("Webhook server started...");
+        httpListener = new HttpListener();
+        httpListener.Prefixes.Add("http://*:8080/webhook/"); // Substitua pelo seu endpoint desejado
+        httpListener.Start();
+        isRunning = true;
+        UnityEngine.Debug.Log("Webhook server started...");
 
-        //Task.Run(() => ListenForRequests());
+        Task.Run(() => ListenForRequests());
     }
 
     private async Task ListenForRequests()

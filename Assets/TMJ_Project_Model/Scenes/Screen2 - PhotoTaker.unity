@@ -10793,7 +10793,7 @@ MonoBehaviour:
   RawVideoPlayer: {fileID: 1563598090}
   RawVideoPlayerPreview: {fileID: 0}
   webcamRawImage: {fileID: 1069807283}
-  numberOfPhotos: 900
+  numberOfPhotos: 800
   captureInterval: 0.033
   capturedFrames: []
   boomerangDuration: 30
@@ -11148,7 +11148,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8138260908250293310, guid: 2c48220c42b642b4eb13fc42e6eb3add, type: 3}
       propertyPath: CaptureOptions
-      value: '-c:v "libopenh264" -profile:v high -preset slower -crf 23 -b:v 4M -c:a
+      value: '-c:v "libopenh264" -profile:v main -preset fast -crf 23 -b:v 4M -c:a
         "aac" -map 0:v:0 -map 1:a:0 "{EXPORTED_VIDEO_PATH}/capture.mp4"
 
 '

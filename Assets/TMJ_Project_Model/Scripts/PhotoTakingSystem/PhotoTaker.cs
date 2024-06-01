@@ -140,13 +140,13 @@ namespace NekraliusDevelopmentStudio
             currentClip2 = clips[0].clip2;
             videoPlayer2.clip = currentClip2;
             cameraStream.Play();
-            //Invoke("MakeGetRequest", 2f);
+            Invoke("MakeGetRequest", 2f);
 
         }
 
         public void MakeGetRequest()
         {
-            //StartCoroutine(GetRequest());
+            StartCoroutine(GetRequest());
         }
         public string EndPointParticipants;
         public Button InteractionStartButton;
@@ -162,74 +162,74 @@ namespace NekraliusDevelopmentStudio
         public TMP_InputField currentUserMusicInput;
         public TextMeshProUGUI messageInput;
         public GameObject ModalParticipantInfo;
-        //IEnumerator GetRequest()
-        //{
-        //    string currentEvent = "STARTED";
-        //    int page = 1;
-        //    int offset = 1;
-        //    string order = "asc";
-        //    string experience_id = "03f92bca-a5ee-44c7-b9e1-aaef0b4be4cd";
+        IEnumerator GetRequest()
+        {
+            string currentEvent = "STARTED";
+            int page = 1;
+            int offset = 1;
+            string order = "asc";
+            string experience_id = "03f92bca-a5ee-44c7-b9e1-aaef0b4be4cd";
 
-        //    string fullUrl = $"{url}{EndPointParticipants}?current_event={currentEvent}&experience_id={experience_id}&page={page}&offset={offset}&order={order}";
+            string fullUrl = $"{url}{EndPointParticipants}?current_event={currentEvent}&experience_id={experience_id}&page={page}&offset={offset}&order={order}";
 
-        //    using (UnityWebRequest request = UnityWebRequest.Get(fullUrl))
-        //    {
-        //        Debug.Log(fullUrl);
-        //        request.SetRequestHeader("Authorization", "Bearer " + token);
-        //        request.SetRequestHeader("access_token", accessToken);
+            using (UnityWebRequest request = UnityWebRequest.Get(fullUrl))
+            {
+                Debug.Log(fullUrl);
+                request.SetRequestHeader("Authorization", "Bearer " + token);
+                request.SetRequestHeader("access_token", accessToken);
 
-        //        yield return request.SendWebRequest();
+                yield return request.SendWebRequest();
 
-        //        if (request.result != UnityWebRequest.Result.Success)
-        //        {
-        //            Debug.LogError("Erro na requisição: " + request.error);
-        //        }
-        //        else
-        //        {
-        //            Debug.Log("Resposta da requisição: " + request.downloadHandler.text);
-        //            ParticipantDataWrapper participantDataWrapper = JsonUtility.FromJson<ParticipantDataWrapper>(request.downloadHandler.text);
+                if (request.result != UnityWebRequest.Result.Success)
+                {
+                    Debug.LogError("Erro na requisição: " + request.error);
+                }
+                else
+                {
+                    Debug.Log("Resposta da requisição: " + request.downloadHandler.text);
+                    ParticipantDataWrapper participantDataWrapper = JsonUtility.FromJson<ParticipantDataWrapper>(request.downloadHandler.text);
 
-        //            if (participantDataWrapper.participants == null || participantDataWrapper.participants.Count == 0)
-        //            {
-        //                Debug.Log("Resposta vazia, não fazendo nada.");
-        //            }
-        //            else
-        //            {
-        //                CancelInvoke("MakeGetRequest");
+                    if (participantDataWrapper.participants == null || participantDataWrapper.participants.Count == 0)
+                    {
+                        Debug.Log("Resposta vazia, não fazendo nada.");
+                    }
+                    else
+                    {
+                        CancelInvoke("MakeGetRequest");
 
-        //                if (!ModalParticipantInfo.activeSelf)
-        //                {
-        //                    SceneManager.LoadScene("Screen2 - PhotoTaker");
-        //                }
-        //                else
-        //                {
-        //                    Participant firstParticipant = participantDataWrapper.participants[0];
-        //                    Debug.Log("ID: " + firstParticipant.id);
-        //                    Debug.Log("Nome: " + firstParticipant.name);
-        //                    currentUserId = firstParticipant.id;
-        //                    currentUserName = firstParticipant.name;
-        //                    messageInput.text = "Participante da vez";
+                        if (!ModalParticipantInfo.activeSelf)
+                        {
+                            SceneManager.LoadScene("Screen2 - PhotoTaker");
+                        }
+                        else
+                        {
+                            Participant firstParticipant = participantDataWrapper.participants[0];
+                            Debug.Log("ID: " + firstParticipant.id);
+                            Debug.Log("Nome: " + firstParticipant.name);
+                            currentUserId = firstParticipant.id;
+                            currentUserName = firstParticipant.name;
+                            messageInput.text = "Participante da vez";
 
-        //                    foreach (var option in firstParticipant.options)
-        //                    {
-        //                        if (option.key == "Matuta Preferida")
-        //                        {
-        //                            currentUserMatuta = option.value;
-        //                        }
-        //                        else if (option.key == "Música Preferida")
-        //                        {
-        //                            currentUserMusic = option.value;
-        //                        }
-        //                        Debug.Log(option.key + ": " + option.value);
-        //                    }
+                            foreach (var option in firstParticipant.options)
+                            {
+                                if (option.key == "Matuta Preferida")
+                                {
+                                    currentUserMatuta = option.value;
+                                }
+                                else if (option.key == "Música Preferida")
+                                {
+                                    currentUserMusic = option.value;
+                                }
+                                Debug.Log(option.key + ": " + option.value);
+                            }
 
-        //                    PopulateInputValues();
-        //                    StartCoroutine(WaitToStartInteraction());
-        //                }
-        //            }
-        //        }
-        //    }
-        //}
+                            PopulateInputValues();
+                            StartCoroutine(WaitToStartInteraction());
+                        }
+                    }
+                }
+            }
+        }
 
         public void ReloadScene()
         {
@@ -479,112 +479,112 @@ namespace NekraliusDevelopmentStudio
             }
         }
 
-        
-        //[SerializeField] private string urlVideo = "http://145.14.134.34:3003";
-        //[SerializeField] private string endpointVideo = "/agent/participants/upload";
-        //[SerializeField] private string token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InVuaXR5QG1hdHV0YS5jb20uYnIiLCJleHBlcmllbmNlX2lkIjoiMDNmOTJiY2EtYTVlZS00NGM3LWI5ZTEtYWFlZjBiNGJlNGNkIiwiaWF0IjoxNzE2NTE2MjQyLCJleHAiOjE3MjQyOTIyNDIsInN1YiI6ImFkYjBkZTM0LTdjOWUtNGY3Yi1iNDlmLTMzNWJkZTIzNDA4NCJ9.B__4UNl7MZmbEYmkIU0HGiQCQjbk_vyxSv6NmXVKg_E";
-        //[SerializeField] private string accessToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiREFOQ0FfTUFUVVRBIiwiaWF0IjoxNzE2NDk1MTgxLCJleHAiOjE3MjQyNzExODEsInN1YiI6IkRBTkNBX01BVFVUQSJ9.nmTQnXKxWVuEC8rBzHSAbEvulemfy5UFlCZN8zGDzE0";
+
+        [SerializeField] private string urlVideo = "http://145.14.134.34:3003";
+        [SerializeField] private string endpointVideo = "/agent/participants/upload";
+        [SerializeField] private string token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InVuaXR5QG1hdHV0YS5jb20uYnIiLCJleHBlcmllbmNlX2lkIjoiMDNmOTJiY2EtYTVlZS00NGM3LWI5ZTEtYWFlZjBiNGJlNGNkIiwiaWF0IjoxNzE2NTE2MjQyLCJleHAiOjE3MjQyOTIyNDIsInN1YiI6ImFkYjBkZTM0LTdjOWUtNGY3Yi1iNDlmLTMzNWJkZTIzNDA4NCJ9.B__4UNl7MZmbEYmkIU0HGiQCQjbk_vyxSv6NmXVKg_E";
+        [SerializeField] private string accessToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiREFOQ0FfTUFUVVRBIiwiaWF0IjoxNzE2NDk1MTgxLCJleHAiOjE3MjQyNzExODEsInN1YiI6IkRBTkNBX01BVFVUQSJ9.nmTQnXKxWVuEC8rBzHSAbEvulemfy5UFlCZN8zGDzE0";
 
 
-        [SerializeField] public string urlVideoHostgator = "https://festverao-saobraz.dilisgs.com.br/video-upload/index.php";
-        [SerializeField] public string endpointoHostgator = "myvideo";
-        [SerializeField] public string movedFolderVideo = "/uploaded_videos/";
-        [SerializeField] public string idVideo = "_video_.mp4";
+        //[SerializeField] public string urlVideoHostgator = "https://festverao-saobraz.dilisgs.com.br/video-upload/index.php";
+        //[SerializeField] public string endpointoHostgator = "myvideo";
+        //[SerializeField] public string movedFolderVideo = "/uploaded_videos/";
+        //[SerializeField] public string idVideo = "_video_.mp4";
 
-        private IEnumerator VideoSend(string videoFilePath)
-        {
-            WWWForm form = new WWWForm();
-
-            // Gerar um timestamp único para o nome do arquivo
-            string timestamp = DateTime.Now.ToString("yyyyMMddHHmmss");
-
-            // Adicionar o timestamp ao nome do arquivo
-            string uniqueVideoFileName = "video_" + timestamp + ".mp4";
-
-            // Carrega o arquivo de vídeo como bytes
-            byte[] videoBytes = File.ReadAllBytes(videoFilePath);
-
-            form.AddBinaryData(endpointoHostgator, videoBytes, uniqueVideoFileName, "video/mp4");
-
-            using (WWW w = new WWW(urlVideoHostgator, form))
-            {
-                yield return w;
-
-                if (!string.IsNullOrEmpty(w.error))
-                {
-                    Debug.Log("Error uploading video: " + w.error);
-                    // Tratar o erro conforme necessário
-                    capturePhotos.VideoUploadMessage.SetActive(false);
-                }
-                else
-                {
-                    Debug.Log("Video uploaded successfully");
-                    // Tratar o sucesso conforme necessário
-                    capturePhotos.VideoUploadMessage.SetActive(false);
-                }
-
-                string downloadURL = urlVideoHostgator + "?download=true&video=" + uniqueVideoFileName;
-
-                QR_CodeGenerator.Instance.finalLink = downloadURL;
-                QR_CodeGenerator.Instance.isActive = true;
-            }
-        }
-
-        //public IEnumerator VideoSend(string videoFilePath)
+        //private IEnumerator VideoSend(string videoFilePath)
         //{
-        //    Debug.Log("Starting video upload...");
-        //    sendMessage.SetActive(true);
+        //    WWWForm form = new WWWForm();
 
+        //    // Gerar um timestamp único para o nome do arquivo
         //    string timestamp = DateTime.Now.ToString("yyyyMMddHHmmss");
+
+        //    // Adicionar o timestamp ao nome do arquivo
         //    string uniqueVideoFileName = "video_" + timestamp + ".mp4";
+
+        //    // Carrega o arquivo de vídeo como bytes
         //    byte[] videoBytes = File.ReadAllBytes(videoFilePath);
 
-        //    Debug.Log($"Loaded video file {videoFilePath}, size: {videoBytes.Length} bytes");
+        //    form.AddBinaryData(endpointoHostgator, videoBytes, uniqueVideoFileName, "video/mp4");
 
-        //    WWWForm form = new WWWForm();
-        //    form.AddField("isFileIdentify", "false");
-        //    form.AddBinaryData("file", videoBytes, uniqueVideoFileName, "video/mp4");
-
-        //    string fullUrl = urlVideo + endpointVideo;
-
-        //    using (UnityWebRequest request = UnityWebRequest.Post(fullUrl, form))
+        //    using (WWW w = new WWW(urlVideoHostgator, form))
         //    {
-        //        request.SetRequestHeader("Authorization", "Bearer " + token);
-        //        request.SetRequestHeader("access_token", accessToken);
+        //        yield return w;
 
-
-        //        yield return request.SendWebRequest();
-
-        //        if (request.result != UnityWebRequest.Result.Success)
+        //        if (!string.IsNullOrEmpty(w.error))
         //        {
-        //            Debug.LogError($"Error uploading video: {request.error}");
-        //            Debug.LogError($"Response Code: {request.responseCode}");
-        //            Debug.LogError($"Response: {request.downloadHandler.text}");
-
+        //            Debug.Log("Error uploading video: " + w.error);
+        //            // Tratar o erro conforme necessário
+        //            capturePhotos.VideoUploadMessage.SetActive(false);
         //        }
         //        else
         //        {
         //            Debug.Log("Video uploaded successfully");
-        //            Debug.Log(request);
-        //            Debug.Log(request.downloadHandler.text);
-        //            string jsonString = request.downloadHandler.text;
-        //            QRCodeData data = JsonUtility.FromJson<QRCodeData>(jsonString);
-
-        //            string base64Code = data.qrcode;
-
-        //            // Remove o prefixo "data:image/png;base64," do código base64
-        //            string base64Only = base64Code.Substring(base64Code.IndexOf(",") + 1);
-
-        //            Debug.Log("Base64 Code: " + base64Only); 
-
-        //            base64QRCode = base64Only;
-
-        //            StartCoroutine(LoadQRCode());
-
+        //            // Tratar o sucesso conforme necessário
+        //            capturePhotos.VideoUploadMessage.SetActive(false);
         //        }
-        //        sendMessage.SetActive(false);
+
+        //        string downloadURL = urlVideoHostgator + "?download=true&video=" + uniqueVideoFileName;
+
+        //        QR_CodeGenerator.Instance.finalLink = downloadURL;
+        //        QR_CodeGenerator.Instance.isActive = true;
         //    }
         //}
+
+        public IEnumerator VideoSend(string videoFilePath)
+        {
+            Debug.Log("Starting video upload...");
+            sendMessage.SetActive(true);
+
+            string timestamp = DateTime.Now.ToString("yyyyMMddHHmmss");
+            string uniqueVideoFileName = "video_" + timestamp + ".mp4";
+            byte[] videoBytes = File.ReadAllBytes(videoFilePath);
+
+            Debug.Log($"Loaded video file {videoFilePath}, size: {videoBytes.Length} bytes");
+
+            WWWForm form = new WWWForm();
+            form.AddField("isFileIdentify", "false");
+            form.AddBinaryData("file", videoBytes, uniqueVideoFileName, "video/mp4");
+
+            string fullUrl = urlVideo + endpointVideo;
+
+            using (UnityWebRequest request = UnityWebRequest.Post(fullUrl, form))
+            {
+                request.SetRequestHeader("Authorization", "Bearer " + token);
+                request.SetRequestHeader("access_token", accessToken);
+
+
+                yield return request.SendWebRequest();
+
+                if (request.result != UnityWebRequest.Result.Success)
+                {
+                    Debug.LogError($"Error uploading video: {request.error}");
+                    Debug.LogError($"Response Code: {request.responseCode}");
+                    Debug.LogError($"Response: {request.downloadHandler.text}");
+
+                }
+                else
+                {
+                    Debug.Log("Video uploaded successfully");
+                    Debug.Log(request);
+                    Debug.Log(request.downloadHandler.text);
+                    string jsonString = request.downloadHandler.text;
+                    QRCodeData data = JsonUtility.FromJson<QRCodeData>(jsonString);
+
+                    string base64Code = data.qrcode;
+
+                    // Remove o prefixo "data:image/png;base64," do código base64
+                    string base64Only = base64Code.Substring(base64Code.IndexOf(",") + 1);
+
+                    Debug.Log("Base64 Code: " + base64Only);
+
+                    base64QRCode = base64Only;
+
+                    StartCoroutine(LoadQRCode());
+
+                }
+                sendMessage.SetActive(false);
+            }
+        }
 
         public RawImage rawImage;
         public string base64QRCode;
