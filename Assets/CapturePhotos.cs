@@ -11,6 +11,13 @@ using FfmpegUnity;
 using NekraliusDevelopmentStudio;
 using UnityEngine.Video;
 
+using System.Net;
+using System.Text;
+using System.Threading.Tasks;
+using PimDeWitte.UnityMainThreadDispatcher;
+using UnityEngine.Networking;
+using Debug = UnityEngine.Debug;
+
 public class CapturePhotos : MonoBehaviour
 {
     public GameObject BtnPreview;
@@ -46,6 +53,150 @@ public class CapturePhotos : MonoBehaviour
     public GameObject Moldura;
     public GameObject Anim;
 
+    private HttpListener httpListener;
+    private bool isRunning;
+    public UnityMainThreadDispatcher dispacher;
+
+    void Start()
+    {
+        StartServer();
+    }
+    //private string url = "https://usable-colt-reasonably.ngrok-free.app/";
+
+    //IEnumerator CheckIfEndpointIsOk()
+    //{
+    //    using (UnityWebRequest webRequest = UnityWebRequest.Get(url))
+    //    {
+    //        // Request and wait for the desired page.
+    //        yield return webRequest.SendWebRequest();
+
+    //        string[] pages = url.Split('/');
+    //        int page = pages.Length - 1;
+
+    //        if (webRequest.result != UnityWebRequest.Result.Success)
+    //        {
+    //            Debug.Log(pages[page] + ": Error: " + webRequest.error);
+    //            InvokeRepeating("MakeGetRequest", 0f, 3f);
+    //        }
+    //        else
+    //        {
+    //            Debug.Log(pages[page] + ":\nReceived: " + webRequest.downloadHandler.text);
+    //            StartServer();
+    //        }
+    //    }
+    //}
+    private void StartServer()
+    {
+
+        //httpListener = new HttpListener();
+        //httpListener.Prefixes.Add("http://*:8080/webhook/"); // Substitua pelo seu endpoint desejado
+        //httpListener.Start();
+        //isRunning = true;
+        //UnityEngine.Debug.Log("Webhook server started...");
+
+        //Task.Run(() => ListenForRequests());
+    }
+
+    private async Task ListenForRequests()
+    {
+        while (isRunning)
+        {
+            var context = await httpListener.GetContextAsync();
+            ProcessRequest(context);
+        }
+    }
+
+    private void ProcessRequest(HttpListenerContext context)
+    {
+        HttpListenerRequest request = context.Request;
+        HttpListenerResponse response = context.Response;
+
+        try
+        {
+            if (request.HttpMethod == "POST")
+            {
+                using (var reader = new System.IO.StreamReader(request.InputStream, request.ContentEncoding))
+                {
+                    string requestBody = reader.ReadToEnd();
+
+                    // Chame ProcessWebhook na thread principal
+                    UnityMainThreadDispatcher.Instance().Enqueue(() => ProcessWebhook(requestBody));
+
+                    // Prepara e envia a resposta
+                    string responseString = "Webhook received";
+                    byte[] buffer = Encoding.UTF8.GetBytes(responseString);
+                    response.ContentLength64 = buffer.Length;
+
+                    using (var output = response.OutputStream)
+                    {
+                        output.Write(buffer, 0, buffer.Length);
+                    }
+                }
+            }
+            else
+            {
+                response.StatusCode = (int)HttpStatusCode.MethodNotAllowed;
+            }
+        }
+        catch (Exception ex)
+        {
+            UnityMainThreadDispatcher.Instance().Enqueue(() => UnityEngine.Debug.LogError("Error processing request: " + ex.Message));
+            response.StatusCode = (int)HttpStatusCode.InternalServerError;
+            string responseString = "Internal Server Error";
+            byte[] buffer = Encoding.UTF8.GetBytes(responseString);
+            response.ContentLength64 = buffer.Length;
+
+            using (var output = response.OutputStream)
+            {
+                output.Write(buffer, 0, buffer.Length);
+            }
+            InvokeRepeating("MakeGetRequest", 0f, 3f);
+        }
+        finally
+        {
+            // Certifique-se de fechar a resposta no bloco finally
+            response.Close();
+        }
+    }
+
+    public void MakeGetRequest()
+    {
+        PhotoTaker.Instance.MakeGetRequest();
+    }
+
+    private void ProcessWebhook(string requestBody)
+    {
+        // Esta chamada será executada na thread principal
+        PhotoTaker.Instance.MakeGetRequest();
+
+        // Implementar lógica de processamento do webhook
+        UnityEngine.Debug.Log("Processing webhook: " + requestBody);
+
+        // Exemplo: lógica específica com base no conteúdo do webhook
+        if (requestBody.Contains("event_type_1"))
+        {
+            UnityEngine.Debug.Log("Processing event type 1");
+            // Lógica específica para o evento tipo 1
+        }
+        else if (requestBody.Contains("event_type_2"))
+        {
+            UnityEngine.Debug.Log("Processing event type 2");
+            // Lógica específica para o evento tipo 2
+        }
+        else
+        {
+            UnityEngine.Debug.Log("Unknown event type");
+        }
+    }
+
+    private void OnDestroy()
+    {
+        isRunning = false;
+        httpListener.Stop();
+        httpListener.Close();
+        UnityEngine.Debug.Log("Webhook server stopped.");
+    }
+
     private void OnApplicationQuit()
     {
         if (ffmpegProcess != null && !ffmpegProcess.HasExited)
@@ -75,6 +226,7 @@ public class CapturePhotos : MonoBehaviour
             StartCoroutine(WaitStop());
             Moldura.SetActive(false);
             Anim.SetActive(false);
+            InteractionManager.instance.EffectsObject.SetActive(false);
             UnityEngine.Debug.Log("Finished playing captured frames.");
             Afterphoto.SetActive(true);
         }
@@ -118,7 +270,7 @@ public class CapturePhotos : MonoBehaviour
                 UnityEngine.Debug.LogWarning("Sharing violation, waiting and retrying: " + ex.Message);
             }
 
-            yield return new WaitForSeconds(1.0f); // Aguarda 1 segundo antes de tentar novamente
+            yield return new WaitForSeconds(1.0f);
         }
 
         UnityEngine.Debug.Log("Video upload locally complete");
@@ -129,7 +281,7 @@ public class CapturePhotos : MonoBehaviour
     {
         capturedFrames = new List<Texture2D>();
 
-        // Iniciar a captura das fotos quando o script for ativado
+
         StartCoroutine(CapturePhotosRoutine());
     }
 
@@ -139,10 +291,8 @@ public class CapturePhotos : MonoBehaviour
         //flashEffect.FlashEffectUpdateLoop();
         while (photoCount < numberOfPhotos)
         {
-            // Aguardar o intervalo de tempo definido
             yield return new WaitForSeconds(captureInterval);
 
-            // Capturar a foto atual da RawImage da webcam e adicionar à lista
             CapturePhotoFromWebcam();
 
             photoCount++;

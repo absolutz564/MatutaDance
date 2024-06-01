@@ -57,13 +57,17 @@ namespace NekraliusDevelopmentStudio
         private void EncondeTextToQR_Code()
         {
             string linkAndHash = finalLink;
-            Debug.Log(linkAndHash);
 
             Color32[] convertPixelToTexture = Encode(linkAndHash, storedEncodedTexture.width, storedEncodedTexture.height);
             storedEncodedTexture.SetPixels32(convertPixelToTexture);
             storedEncodedTexture.Apply();
-
+            Invoke("MakeGetRequest", 20f);
             QR_CodeImageReceiver.texture = storedEncodedTexture;
+        }
+
+        public void MakeGetRequest()
+        {
+            PhotoTaker.Instance.ReloadScene();
         }
         #endregion
     }
