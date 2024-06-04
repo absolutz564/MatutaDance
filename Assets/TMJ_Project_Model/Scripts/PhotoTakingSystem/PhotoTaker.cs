@@ -600,7 +600,7 @@ namespace NekraliusDevelopmentStudio
             // Define a textura na RawImage
             rawImage.texture = texture;
             sendMessage.SetActive(false);
-            Invoke("ReloadScene", 30f);
+            Invoke("ReloadScene", 120f);
             yield return null;
         }
 

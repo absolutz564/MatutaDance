@@ -2,8 +2,11 @@ using NekraliusDevelopmentStudio;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.UIElements;
+using Image = UnityEngine.UI.Image;
 
 public class InteractionManager : MonoBehaviour
 {
@@ -46,7 +49,7 @@ public class InteractionManager : MonoBehaviour
     public GameObject TimerObject;
 
     public int musicIndex;
-
+    public UnityEngine.UI.Slider slider;
 
     public void LoadMusic()
     {
@@ -57,10 +60,11 @@ public class InteractionManager : MonoBehaviour
     {
 
     }
-
+    public CapturePhotos capturePhotos;
     public void StartTimer()
     {
         TimerObject.SetActive(true);
+        capturePhotos.Moldura.SetActive(true);
         currentTime = initialTime;
 
         // Atualize o texto inicial
@@ -74,6 +78,7 @@ public class InteractionManager : MonoBehaviour
     {
         // Inicie uma rotina para decrementar o tempo a cada segundo
         StartCoroutine(CountdownRoutine());
+        StartCoroutine(AnimateSlider());
     }
 
     IEnumerator CountdownRoutine()
@@ -91,6 +96,22 @@ public class InteractionManager : MonoBehaviour
 
         // Quando o tempo acabar, atualize o texto para "Fim do Tempo!"
         countdownText.text = "Fim do Tempo!";
+    }
+    private IEnumerator AnimateSlider()
+    {
+        float currentTime = 0f;
+
+        // Enquanto o tempo atual for menor que a duração, atualize o valor do Slider
+        while (currentTime < 20)
+        {
+            float sliderValue = Mathf.Lerp(1f, 0f, currentTime / 20);
+            slider.value = sliderValue;
+
+            currentTime += Time.deltaTime;
+            yield return null; // Espera o próximo frame
+        }
+
+        slider.value = 0f;
     }
 
     void UpdateCountdownText()
@@ -110,7 +131,7 @@ public class InteractionManager : MonoBehaviour
         musicIndices.Add("Casca de bala - Thullio Milionário", 2);
         musicIndices.Add("Pega o Guanabara - Wesley Safadão", 3);
         musicIndices.Add("Maravilhosa - Zé Vaqueiro", 4);
-        musicIndices.Add("Dano Sarrada - Japaõzin & Marina Sena", 5);
+        musicIndices.Add("Dano Sarrada - Japãozin & Marina Sena", 5);
         musicIndices.Add("Uber - Xand Avião", 6);
         musicIndices.Add("Vaqueira - Eric Land", 7);
         musicIndices.Add("Novinha Bandida - Henry Freitas", 8);
@@ -143,11 +164,11 @@ public class InteractionManager : MonoBehaviour
         musicIndices.Add("Rindo À Toa - Falamansa", 35);
         musicIndices.Add("Colo de menina - Rastapé", 36);
         musicIndices.Add("Isso aqui tá bom demais - Dominguinhos", 37);
-        musicIndices.Add("Pagode Russo Luiz Gonzaga", 38);
+        musicIndices.Add("Pagode Russo - Luiz Gonzaga", 38);
         musicIndices.Add("Filho do Mato - Rai Saia Rodada", 39);
         musicIndices.Add("Vou virar fazendeiro - Rai Saia Rodada", 40);
         musicIndices.Add("Carinha de Neném - Japãozin", 41);
-        musicIndices.Add("Solinho do Brabo - Japaozin", 42);
+        musicIndices.Add("Solinho do Brabo - Japãozin", 42);
         musicIndices.Add("Liga o paredão - Fabiano Guimarães", 43);
         musicIndices.Add("Respeita o interior - Fabiano Guimarães", 44);
         musicIndices.Add("Respeita o interior - Fabiano Guimarãess", 45);

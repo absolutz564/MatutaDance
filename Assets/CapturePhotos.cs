@@ -253,7 +253,7 @@ public class CapturePhotos : MonoBehaviour
 
         // Aguarda um momento para garantir que o arquivo seja fechado
         yield return new WaitForSeconds(1.0f);
-        InteractionManager.instance.audioSource.Stop();
+        //InteractionManager.instance.audioSource.Stop();
         StartVideoPreview(videoFilePath);
 
         bool uploadSuccessful = false;
